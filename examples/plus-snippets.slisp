@@ -1,0 +1,207 @@
+;; Some example SugarLisp Plus dialect code snippets
+;; (compare to SugarLisp Core's core-snippets.score)
+
+// simple infix "." for property access:
+(console.log "Hello World!")
+
+;; a simple anonymous function
+(var square (function (n)
+  (* n n)))
+(console.log (square 10))
+
+;; a simple named function
+(function myadd (x, y)
+  (+ x y))
+
+;; if statement
+(if (undefined? window)
+  (console.log "Not Running on browser")
+  (console.log "Running on browser"))
+
+;; if expressions
+(console.log "1 and 2 are" (if? (!== 1 2) "not equal" "equal"))
+(console.log "console is" (if? (object? console) "an object" "not an object"))
+(console.log "console is" (if? (array? console) "an array" "not an array"))
+
+// arrays
+(var arr [1 2 3])
+(console.log "for array:" arr)
+(console.log "first is:" (first arr))
+(console.log "rest is:" (rest arr))
+
+// with commas (treated same as white space)
+(var arrComma [1, 2, 3])
+
+// js-style array access:
+(console.log "arr[2] is " arrComma[2])
+
+// empty array
+(var mtarr2 [])
+(console.log "empty array is empty:" (empty? mtarr2))
+
+;; macros
+(macro mylet (args vals ...rest)
+  ((function ~args ~rest) ~@vals))
+
+(mylet (name email tel) ("John" "john@example.com" "555-555-5556")
+  (console.log name) (console.log email))
+
+;; {} lets you treat multiple commands as one expression:
+;; this is an alias for core's (begin...)
+{
+  (console.log "code block first expr")
+  (console.log "code block second expr")
+}
+
+// js/json style object literals
+(var obj {
+  first: "fred"
+  last: "flintstone"
+  friends: ["barney","betty"]
+  toString: (function () (str this.first " " this.last))
+})
+
+// with commas
+(var objComma {
+  first: "fred",
+  last: "flintstone",
+  friends: ["barney","betty"],
+  toString: (function () (str this.first " " this.last))
+})
+
+(console.log ((objComma.toString)))
+
+// use of "@" for "this"
+(var objAt {
+  first: "fred",
+  last: "flintstone",
+  toString: (function() "${@first} ${@last}"),
+  dump: (function() (console.log (@toString)))
+})
+
+((objAt.dump))
+
+// Test of arrow functions
+(var arr [1,2,3,4])
+(arr.forEach (el) => (console.log el))
+
+// testing lexical this
+(function Ubertest (x) {
+  (set this.x x)
+
+  (function Test (x) {
+    (set this.x x)
+
+    (var arr [1,2,3])
+    (arr.forEach (el) => (console.log this.x el))
+  })
+
+  (var arr ['a','b','c'])
+  (arr.forEach (el) => (new Test "${this.x} ${el}"))
+})
+
+(new Ubertest "Uber")
+
+// use of new
+(var todayDate (new Date))
+(console.log (new Date "October 13, 1975 11:13:00"))
+
+(var dayNum (.getDay todayDate))
+(console.log dayNum)
+
+// a traditional javascript switch statement
+(var dayName)
+(switch dayNum
+  0 { (= dayName "sun") (break) }
+  1 { (= dayName "mon") (break) }
+  2 { (= dayName "tues") (break) }
+  3 { (= dayName "wed") (break) }
+  4 { (= dayName "thu") (break) }
+  5 { (dayName "fri") (break) }
+  default { (= dayName "sat") (break) })
+(console.log "switch says today is ${dayName}")
+
+;; a simple case
+(var dayName (case dayNum
+  0 "sun"
+  1 "mon"
+  2 "tues"
+  3 "wed"
+  4 "thu"
+  5 "fri"
+  6 "sat"))
+(console.log "case says today is ${dayName}")
+
+;; a simple cond
+(var dayMsg
+  (cond
+    (=== dayNum 5) "tgif!!"
+    (|| (=== dayNum 0) (=== dayNum 6)) "yahoo it's the weekend!"
+    true "blech gotta work today it's a weekday"))
+(console.log "cond says about today: ${dayMsg}")
+
+;; a simple while loop
+;; note the while body is whatever expressions follow the condition
+(console.log 'a while loop (5 downto 1)');
+(var wx 5)
+(while (!= wx 0)
+  (console.log wx)
+  wx--)
+
+;; a simple times loop
+(console.log 'a 4 "dotimes" loop (0 to 3)');
+(dotimes (tx, 4)
+  (console.log tx))
+
+(console.log "an each loop (1 to 3)")
+(each [1, 2, 3] (function (elem i list) (console.log elem)))
+
+;; a list comprehension
+(console.log "a list comprehension of ['a','b','c'] with [3,4,5]")
+(console.log (list-of
+  (letters ['a', 'b', 'c']
+   numbers [3, 4, 5])
+  [letters, numbers]))
+
+// slashy regexes deserve extra care...
+// (cause they can get mixed up with comments and divide!)
+(var re #/[a-zA-Z0-9]/)
+;; and make sure plain / still works right
+(console.log (/ 10 5))
+
+// RIGHT NOW A REGEX LIKE /flint/g MISSES THE "g" ON THE END - NEED TO FIX
+(console.log "fred flintstone contains 'flint':" (.test #/flint/ "fred flintstone"))
+(console.log "fred flintstone contains 'flint':" (#/flint/.test "fred flintstone"))
+
+/* and another block comment this time on one line */
+(if (.test #/[^\.]+\.[^\.]+/ "filename.ext")
+  (console.log "regex correctly says 'filename.ext' has an extension")
+  (console.log "regex incorrectly says 'filename.ext' has no extension"))
+
+// simple javascript passthru as a string
+(js "console.log('hello');")
+
+// javscript passthru using a template string
+// had trouble with this - NEED TO FIX - the below was a workaround
+(var name "fred")
+(var greeting 'hello ${name}')
+(js "console.log(greeting);")
+
+// try/catch
+(try
+  (console.log "In try")
+  (throw "In catch")
+  (function (err)
+    (console.log err)))
+
+;; This example shows the dangers of using a macro
+(macro msquare (x)
+  (* ~x ~x))
+(console.log (msquare 10))
+
+;; The code above works fine. Now consider the code below
+(var i 2)
+(console.log (msquare ++i))
+
+;; Oops you got 12! An embarrassing square of a no. Thats because the macro
+;; expanded to (* ++i ++i) which is multiplying 3 and 4!
