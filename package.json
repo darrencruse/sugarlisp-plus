@@ -1,5 +1,5 @@
 {
-  "name": "sugarlisp-core",
+  "name": "sugarlisp-plus",
   "description": "sugarlisp plus is a lisp/javascript hybrid",
   "keywords": [
     "sugarlisp",
@@ -15,7 +15,7 @@
   "licenses": [
     {
       "type": "MIT",
-      "url": "https://raw.github.com/darrencruse/sugarlisp-core/master/LICENSE"
+      "url": "https://raw.github.com/darrencruse/sugarlisp-plus/master/LICENSE"
     }
   ],
   "engines": {
@@ -24,10 +24,10 @@
   "directories": {
     "lib": "./lib"
   },
-  "homepage": "https://github.com/darrencruse/sugarlisp-core",
-  "bugs": "https://github.com/darrencruse/sugarlisp-core/issues",
+  "homepage": "https://github.com/darrencruse/sugarlisp-plus",
+  "bugs": "https://github.com/darrencruse/sugarlisp-plus/issues",
   "repository": {
     "type": "git",
-    "url": "git://github.com/darrencruse/sugarlisp-core.git"
+    "url": "git://github.com/darrencruse/sugarlisp-plus.git"
   }
 }
