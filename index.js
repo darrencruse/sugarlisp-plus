@@ -1,4 +1,7 @@
 
 module.exports = {
-  syntax: require('./syntax')
+  name: "plus",
+  extends: "core",
+  lextab: require('./lextab'),
+  readtab: require('./readtab')
 };

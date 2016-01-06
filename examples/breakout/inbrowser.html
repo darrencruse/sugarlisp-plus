@@ -139,7 +139,7 @@
 	  (window.setInterval tick 30)))
 
 	(.ready ($ document) (function ()
-		(.enableBrowserRepl (require "./transpiler"))))
+		(.enableBrowserRepl (require "./engine"))))
 
 	// but these are provided to make it easy
 	#if (=== transpile.on "browser")
